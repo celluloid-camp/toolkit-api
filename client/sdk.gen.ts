@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.js';
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
-import type { CreateAnalysisTaskJobAnalysePostData, CreateAnalysisTaskJobAnalysePostErrors, CreateAnalysisTaskJobAnalysePostResponses, GetJobResultsJobJobIdResultsGetData, GetJobResultsJobJobIdResultsGetErrors, GetJobResultsJobJobIdResultsGetResponses, GetJobStatusStatusJobIdGetData, GetJobStatusStatusJobIdGetErrors, GetJobStatusStatusJobIdGetResponses, HealthCheckHealthGetData, HealthCheckHealthGetResponses } from './types.gen.js';
+import type { CreateAnalysisJobData, CreateAnalysisJobErrors, CreateAnalysisJobResponses, GetJobResultsData, GetJobResultsErrors, GetJobResultsResponses, GetJobStatusData, GetJobStatusErrors, GetJobStatusResponses, HealthCheckData, HealthCheckResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -23,14 +23,14 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  *
  * Health check endpoint
  */
-export const healthCheckHealthGet = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckHealthGetData, ThrowOnError>) => (options?.client ?? client).get<HealthCheckHealthGetResponses, unknown, ThrowOnError>({ url: '/health', ...options });
+export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>) => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({ url: '/health', ...options });
 
 /**
  * Create an analysis task for a video
  *
  * Start video analysis on a video
  */
-export const createAnalysisTaskJobAnalysePost = <ThrowOnError extends boolean = false>(options: Options<CreateAnalysisTaskJobAnalysePostData, ThrowOnError>) => (options.client ?? client).post<CreateAnalysisTaskJobAnalysePostResponses, CreateAnalysisTaskJobAnalysePostErrors, ThrowOnError>({
+export const createAnalysisJob = <ThrowOnError extends boolean = false>(options: Options<CreateAnalysisJobData, ThrowOnError>) => (options.client ?? client).post<CreateAnalysisJobResponses, CreateAnalysisJobErrors, ThrowOnError>({
     security: [{ name: 'x-api-key', type: 'apiKey' }],
     url: '/job/analyse',
     ...options,
@@ -45,9 +45,9 @@ export const createAnalysisTaskJobAnalysePost = <ThrowOnError extends boolean = 
  *
  * Get the status of a detection job
  */
-export const getJobStatusStatusJobIdGet = <ThrowOnError extends boolean = false>(options: Options<GetJobStatusStatusJobIdGetData, ThrowOnError>) => (options.client ?? client).get<GetJobStatusStatusJobIdGetResponses, GetJobStatusStatusJobIdGetErrors, ThrowOnError>({ url: '/status/{job_id}', ...options });
+export const getJobStatus = <ThrowOnError extends boolean = false>(options: Options<GetJobStatusData, ThrowOnError>) => (options.client ?? client).get<GetJobStatusResponses, GetJobStatusErrors, ThrowOnError>({ url: '/status/{job_id}', ...options });
 
 /**
  * Get the results of a completed analysis job
  */
-export const getJobResultsJobJobIdResultsGet = <ThrowOnError extends boolean = false>(options: Options<GetJobResultsJobJobIdResultsGetData, ThrowOnError>) => (options.client ?? client).get<GetJobResultsJobJobIdResultsGetResponses, GetJobResultsJobJobIdResultsGetErrors, ThrowOnError>({ url: '/job/{job_id}/results', ...options });
+export const getJobResults = <ThrowOnError extends boolean = false>(options: Options<GetJobResultsData, ThrowOnError>) => (options.client ?? client).get<GetJobResultsResponses, GetJobResultsErrors, ThrowOnError>({ url: '/job/{job_id}/results', ...options });

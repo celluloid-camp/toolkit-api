@@ -404,48 +404,48 @@ export type VideoMetadataModel = {
     source: string;
 };
 
-export type HealthCheckHealthGetData = {
+export type HealthCheckData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/health';
 };
 
-export type HealthCheckHealthGetResponses = {
+export type HealthCheckResponses = {
     /**
      * Successful Response
      */
     200: HealthResponse;
 };
 
-export type HealthCheckHealthGetResponse = HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
+export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
 
-export type CreateAnalysisTaskJobAnalysePostData = {
+export type CreateAnalysisJobData = {
     body: AnalysisRequest;
     path?: never;
     query?: never;
     url: '/job/analyse';
 };
 
-export type CreateAnalysisTaskJobAnalysePostErrors = {
+export type CreateAnalysisJobErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateAnalysisTaskJobAnalysePostError = CreateAnalysisTaskJobAnalysePostErrors[keyof CreateAnalysisTaskJobAnalysePostErrors];
+export type CreateAnalysisJobError = CreateAnalysisJobErrors[keyof CreateAnalysisJobErrors];
 
-export type CreateAnalysisTaskJobAnalysePostResponses = {
+export type CreateAnalysisJobResponses = {
     /**
      * Successful Response
      */
     202: AnalysisResponse;
 };
 
-export type CreateAnalysisTaskJobAnalysePostResponse = CreateAnalysisTaskJobAnalysePostResponses[keyof CreateAnalysisTaskJobAnalysePostResponses];
+export type CreateAnalysisJobResponse = CreateAnalysisJobResponses[keyof CreateAnalysisJobResponses];
 
-export type GetJobStatusStatusJobIdGetData = {
+export type GetJobStatusData = {
     body?: never;
     path: {
         /**
@@ -457,25 +457,25 @@ export type GetJobStatusStatusJobIdGetData = {
     url: '/status/{job_id}';
 };
 
-export type GetJobStatusStatusJobIdGetErrors = {
+export type GetJobStatusErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetJobStatusStatusJobIdGetError = GetJobStatusStatusJobIdGetErrors[keyof GetJobStatusStatusJobIdGetErrors];
+export type GetJobStatusError = GetJobStatusErrors[keyof GetJobStatusErrors];
 
-export type GetJobStatusStatusJobIdGetResponses = {
+export type GetJobStatusResponses = {
     /**
      * Successful Response
      */
     200: JobStatusResponse;
 };
 
-export type GetJobStatusStatusJobIdGetResponse = GetJobStatusStatusJobIdGetResponses[keyof GetJobStatusStatusJobIdGetResponses];
+export type GetJobStatusResponse = GetJobStatusResponses[keyof GetJobStatusResponses];
 
-export type GetJobResultsJobJobIdResultsGetData = {
+export type GetJobResultsData = {
     body?: never;
     path: {
         /**
@@ -487,23 +487,23 @@ export type GetJobResultsJobJobIdResultsGetData = {
     url: '/job/{job_id}/results';
 };
 
-export type GetJobResultsJobJobIdResultsGetErrors = {
+export type GetJobResultsErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetJobResultsJobJobIdResultsGetError = GetJobResultsJobJobIdResultsGetErrors[keyof GetJobResultsJobJobIdResultsGetErrors];
+export type GetJobResultsError = GetJobResultsErrors[keyof GetJobResultsErrors];
 
-export type GetJobResultsJobJobIdResultsGetResponses = {
+export type GetJobResultsResponses = {
     /**
      * Successful Response
      */
     200: JobResultsResponse;
 };
 
-export type GetJobResultsJobJobIdResultsGetResponse = GetJobResultsJobJobIdResultsGetResponses[keyof GetJobResultsJobJobIdResultsGetResponses];
+export type GetJobResultsResponse = GetJobResultsResponses[keyof GetJobResultsResponses];
 
 export type JobCompletedjobCompletedPostWebhookPayload = JobCompletedWebhook;
 
