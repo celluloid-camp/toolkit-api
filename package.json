@@ -20,6 +20,10 @@
 		"./schemas": {
 			"types": "./dist/schemas.gen.d.ts",
 			"default": "./dist/schemas.gen.js"
+		},
+		"./types": {
+			"types": "./dist/types.gen.d.ts",
+			"default": "./dist/types.gen.js"
 		}
 	},
 	"files": [
