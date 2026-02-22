@@ -16,6 +16,10 @@
 		"./client": {
 			"types": "./dist/client/client.gen.d.ts",
 			"default": "./dist/client/client.gen.js"
+		},
+		"./schemas": {
+			"types": "./dist/schemas.gen.d.ts",
+			"default": "./dist/schemas.gen.js"
 		}
 	},
 	"files": [
