@@ -2,9 +2,9 @@
 
 export const AnalysisRequestSchema = {
     properties: {
-        project_id: {
+        external_id: {
             type: 'string',
-            title: 'Project Id',
+            title: 'External Id',
             description: 'Project identifier'
         },
         video_url: {
@@ -35,7 +35,7 @@ export const AnalysisRequestSchema = {
     },
     type: 'object',
     required: [
-        'project_id',
+        'external_id',
         'video_url'
     ],
     title: 'AnalysisRequest'
@@ -76,8 +76,7 @@ export const AnalysisResponseSchema = {
         'job_id',
         'status',
         'queue_position',
-        'message',
-        'callback_url'
+        'message'
     ],
     title: 'AnalysisResponse'
 } as const;
@@ -289,6 +288,10 @@ export const HTTPValidationErrorSchema = {
 
 export const HealthResponseSchema = {
     properties: {
+        version: {
+            type: 'string',
+            title: 'Version'
+        },
         status: {
             type: 'string',
             title: 'Status'
@@ -297,15 +300,17 @@ export const HealthResponseSchema = {
             type: 'string',
             title: 'Timestamp'
         },
-        queue_size: {
-            type: 'integer',
-            title: 'Queue Size'
+        job_stats: {
+            anyOf: [
+                {
+                    $ref: '#/components/schemas/JobStats'
+                },
+                {
+                    type: 'null'
+                }
+            ]
         },
-        processing_jobs: {
-            type: 'integer',
-            title: 'Processing Jobs'
-        },
-        current_job: {
+        error: {
             anyOf: [
                 {
                     type: 'string'
@@ -314,16 +319,14 @@ export const HealthResponseSchema = {
                     type: 'null'
                 }
             ],
-            title: 'Current Job'
+            title: 'Error'
         }
     },
     type: 'object',
     required: [
+        'version',
         'status',
-        'timestamp',
-        'queue_size',
-        'processing_jobs',
-        'current_job'
+        'timestamp'
     ],
     title: 'HealthResponse'
 } as const;
@@ -334,9 +337,9 @@ export const JobCompletedWebhookSchema = {
             type: 'string',
             title: 'Job Id'
         },
-        project_id: {
+        external_id: {
             type: 'string',
-            title: 'Project Id'
+            title: 'External Id'
         },
         status: {
             type: 'string',
@@ -351,11 +354,75 @@ export const JobCompletedWebhookSchema = {
     type: 'object',
     required: [
         'job_id',
-        'project_id',
+        'external_id',
         'status',
         'timestamp'
     ],
     title: 'JobCompletedWebhook'
+} as const;
+
+export const JobResultsResponseSchema = {
+    properties: {
+        status: {
+            type: 'string',
+            title: 'Status'
+        },
+        data: {
+            anyOf: [
+                {
+                    $ref: '#/components/schemas/DetectionResultsModel'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        error_message: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Error Message'
+        }
+    },
+    type: 'object',
+    required: [
+        'status'
+    ],
+    title: 'JobResultsResponse'
+} as const;
+
+export const JobStatsSchema = {
+    properties: {
+        queued: {
+            type: 'integer',
+            title: 'Queued'
+        },
+        processing: {
+            type: 'integer',
+            title: 'Processing'
+        },
+        completed: {
+            type: 'integer',
+            title: 'Completed'
+        },
+        failed: {
+            type: 'integer',
+            title: 'Failed'
+        }
+    },
+    type: 'object',
+    required: [
+        'queued',
+        'processing',
+        'completed',
+        'failed'
+    ],
+    title: 'JobStats'
 } as const;
 
 export const JobStatusResponseSchema = {
@@ -364,17 +431,9 @@ export const JobStatusResponseSchema = {
             type: 'string',
             title: 'Job Id'
         },
-        project_id: {
+        external_id: {
             type: 'string',
-            title: 'Project Id'
-        },
-        video_url: {
-            type: 'string',
-            title: 'Video Url'
-        },
-        similarity_threshold: {
-            type: 'number',
-            title: 'Similarity Threshold'
+            title: 'External Id'
         },
         status: {
             type: 'string',
@@ -385,26 +444,14 @@ export const JobStatusResponseSchema = {
             title: 'Progress'
         },
         queue_position: {
-            anyOf: [
-                {
-                    type: 'integer'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Queue Position'
+            type: 'integer',
+            title: 'Queue Position',
+            default: 0
         },
         estimated_wait_time: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Estimated Wait Time'
+            type: 'string',
+            title: 'Estimated Wait Time',
+            default: '00:00:00'
         },
         start_time: {
             anyOf: [
@@ -428,29 +475,6 @@ export const JobStatusResponseSchema = {
             ],
             title: 'End Time'
         },
-        result_path: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Result Path'
-        },
-        metadata: {
-            anyOf: [
-                {
-                    additionalProperties: true,
-                    type: 'object'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Metadata'
-        },
         error_message: {
             anyOf: [
                 {
@@ -466,44 +490,11 @@ export const JobStatusResponseSchema = {
     type: 'object',
     required: [
         'job_id',
-        'project_id',
-        'video_url',
-        'similarity_threshold',
+        'external_id',
         'status',
-        'progress',
-        'queue_position',
-        'estimated_wait_time',
-        'start_time',
-        'end_time',
-        'result_path',
-        'metadata',
-        'error_message'
+        'progress'
     ],
     title: 'JobStatusResponse'
-} as const;
-
-export const ModelMetadataModelSchema = {
-    properties: {
-        name: {
-            type: 'string',
-            title: 'Name'
-        },
-        type: {
-            type: 'string',
-            title: 'Type'
-        },
-        version: {
-            type: 'string',
-            title: 'Version'
-        }
-    },
-    type: 'object',
-    required: [
-        'name',
-        'type',
-        'version'
-    ],
-    title: 'ModelMetadataModel'
 } as const;
 
 export const ProcessingMetadataModelSchema = {
@@ -594,9 +585,6 @@ export const ResultsMetadataModelSchema = {
         video: {
             $ref: '#/components/schemas/VideoMetadataModel'
         },
-        model: {
-            $ref: '#/components/schemas/ModelMetadataModel'
-        },
         sprite: {
             $ref: '#/components/schemas/SpriteMetadataModel'
         },
@@ -607,7 +595,6 @@ export const ResultsMetadataModelSchema = {
     type: 'object',
     required: [
         'video',
-        'model',
         'sprite',
         'processing'
     ],
