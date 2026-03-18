@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.js';
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
-import type { CreateAnalysisJobData, CreateAnalysisJobErrors, CreateAnalysisJobResponses, GetJobResultsData, GetJobResultsErrors, GetJobResultsResponses, GetJobStatusData, GetJobStatusErrors, GetJobStatusResponses, HealthCheckData, HealthCheckResponses } from './types.gen.js';
+import type { CreateJobData, CreateJobErrors, CreateJobResponses, GetJobResultsData, GetJobResultsErrors, GetJobResultsResponses, GetJobStatusData, GetJobStatusErrors, GetJobStatusResponses, HealthCheckData, HealthCheckResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -26,13 +26,14 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>) => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({ url: '/health', ...options });
 
 /**
- * Create an analysis task for a video
+ * Create a processing job (object_detect or scene_detect)
  *
- * Start video analysis on a video
+ * Create a video processing job. The job_type field selects which
+ * processing pipeline to run, and params holds type-specific options.
  */
-export const createAnalysisJob = <ThrowOnError extends boolean = false>(options: Options<CreateAnalysisJobData, ThrowOnError>) => (options.client ?? client).post<CreateAnalysisJobResponses, CreateAnalysisJobErrors, ThrowOnError>({
+export const createJob = <ThrowOnError extends boolean = false>(options: Options<CreateJobData, ThrowOnError>) => (options.client ?? client).post<CreateJobResponses, CreateJobErrors, ThrowOnError>({
     security: [{ name: 'x-api-key', type: 'apiKey' }],
-    url: '/job/analyse',
+    url: '/job/create',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -41,13 +42,21 @@ export const createAnalysisJob = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
- * Get the status of a detection job
+ * Get the status of a job
  *
- * Get the status of a detection job
+ * Get the status of a processing job
  */
-export const getJobStatus = <ThrowOnError extends boolean = false>(options: Options<GetJobStatusData, ThrowOnError>) => (options.client ?? client).get<GetJobStatusResponses, GetJobStatusErrors, ThrowOnError>({ url: '/status/{job_id}', ...options });
+export const getJobStatus = <ThrowOnError extends boolean = false>(options: Options<GetJobStatusData, ThrowOnError>) => (options.client ?? client).get<GetJobStatusResponses, GetJobStatusErrors, ThrowOnError>({
+    security: [{ name: 'x-api-key', type: 'apiKey' }],
+    url: '/status/{job_id}',
+    ...options
+});
 
 /**
- * Get the results of a completed analysis job
+ * Get the results of a completed job
  */
-export const getJobResults = <ThrowOnError extends boolean = false>(options: Options<GetJobResultsData, ThrowOnError>) => (options.client ?? client).get<GetJobResultsResponses, GetJobResultsErrors, ThrowOnError>({ url: '/job/{job_id}/results', ...options });
+export const getJobResults = <ThrowOnError extends boolean = false>(options: Options<GetJobResultsData, ThrowOnError>) => (options.client ?? client).get<GetJobResultsResponses, GetJobResultsErrors, ThrowOnError>({
+    security: [{ name: 'x-api-key', type: 'apiKey' }],
+    url: '/job/{job_id}/results',
+    ...options
+});

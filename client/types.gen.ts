@@ -7,62 +7,6 @@ export type ClientOptions = {
 export type Webhooks = JobCompletedjobCompletedPostWebhookRequest;
 
 /**
- * AnalysisRequest
- */
-export type AnalysisRequest = {
-    /**
-     * External Id
-     *
-     * Project identifier
-     */
-    external_id: string;
-    /**
-     * Video Url
-     *
-     * URL or path to video file
-     */
-    video_url: string;
-    /**
-     * Similarity Threshold
-     *
-     * Similarity threshold for object tracking
-     */
-    similarity_threshold?: number;
-    /**
-     * Callback Url
-     *
-     * Callback URL for job completion notifications
-     */
-    callback_url?: string | null;
-};
-
-/**
- * AnalysisResponse
- */
-export type AnalysisResponse = {
-    /**
-     * Job Id
-     */
-    job_id: string;
-    /**
-     * Status
-     */
-    status: string;
-    /**
-     * Queue Position
-     */
-    queue_position: number;
-    /**
-     * Message
-     */
-    message: string;
-    /**
-     * Callback Url
-     */
-    callback_url?: string | null;
-};
-
-/**
  * BoundingBoxModel
  */
 export type BoundingBoxModel = {
@@ -82,6 +26,62 @@ export type BoundingBoxModel = {
      * Height
      */
     height: number;
+};
+
+/**
+ * CreateJobRequest
+ */
+export type CreateJobRequest = {
+    job_type: JobType;
+    /**
+     * External Id
+     *
+     * Project identifier
+     */
+    external_id: string;
+    /**
+     * Video Url
+     *
+     * URL or path to video file
+     */
+    video_url: string;
+    /**
+     * Callback Url
+     *
+     * Callback URL for job completion notifications
+     */
+    callback_url?: string | null;
+    /**
+     * Params
+     */
+    params?: ObjectDetectParams | SceneDetectParams;
+};
+
+/**
+ * CreateJobResponse
+ */
+export type CreateJobResponse = {
+    /**
+     * Job Id
+     */
+    job_id: string;
+    job_type: JobType;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Queue Position
+     */
+    queue_position: number;
+    /**
+     * Message
+     */
+    message: string;
+    /**
+     * Callback Url
+     */
+    callback_url?: string | null;
 };
 
 /**
@@ -129,6 +129,10 @@ export type DetectionObjectModel = {
  * DetectionResultsModel
  */
 export type DetectionResultsModel = {
+    /**
+     * Result Type
+     */
+    result_type?: 'object_detect';
     /**
      * Version
      */
@@ -235,7 +239,18 @@ export type JobResultsResponse = {
      * Status
      */
     status: string;
-    data?: DetectionResultsModel | null;
+    /**
+     * Job Type
+     */
+    job_type?: string | null;
+    /**
+     * Data
+     */
+    data?: ({
+        result_type: 'object_detect';
+    } & DetectionResultsModel) | ({
+        result_type: 'scene_detect';
+    } & SceneDetectResultsModel) | null;
     /**
      * Error Message
      */
@@ -277,6 +292,10 @@ export type JobStatusResponse = {
      */
     external_id: string;
     /**
+     * Job Type
+     */
+    job_type?: string | null;
+    /**
      * Status
      */
     status: string;
@@ -304,6 +323,34 @@ export type JobStatusResponse = {
      * Error Message
      */
     error_message?: string | null;
+};
+
+/**
+ * JobType
+ */
+export const JobType = { OBJECT_DETECT: 'object_detect', SCENE_DETECT: 'scene_detect' } as const;
+
+/**
+ * JobType
+ */
+export type JobType = typeof JobType[keyof typeof JobType];
+
+/**
+ * ObjectDetectParams
+ */
+export type ObjectDetectParams = {
+    /**
+     * Similarity Threshold
+     *
+     * Similarity threshold for object tracking
+     */
+    similarity_threshold?: number;
+    /**
+     * Analysis Fps
+     *
+     * Frames per second to analyse (default 1)
+     */
+    analysis_fps?: number;
 };
 
 /**
@@ -347,13 +394,85 @@ export type ResultsMetadataModel = {
 };
 
 /**
+ * SceneDetectParams
+ */
+export type SceneDetectParams = {
+    /**
+     * Threshold
+     *
+     * Content detection sensitivity threshold
+     */
+    threshold?: number;
+};
+
+/**
+ * SceneDetectResultsModel
+ */
+export type SceneDetectResultsModel = {
+    /**
+     * Result Type
+     */
+    result_type?: 'scene_detect';
+    /**
+     * Total Scenes
+     */
+    total_scenes: number;
+    /**
+     * Scenes
+     */
+    scenes: Array<SceneInfoModel>;
+    /**
+     * Sprite Url
+     */
+    sprite_url?: string | null;
+    /**
+     * Sprite Fragments
+     */
+    sprite_fragments?: Array<string> | null;
+};
+
+/**
+ * SceneInfoModel
+ */
+export type SceneInfoModel = {
+    /**
+     * Scene Id
+     */
+    scene_id: number;
+    /**
+     * Start Time
+     */
+    start_time: string;
+    /**
+     * End Time
+     */
+    end_time: string;
+    /**
+     * Start Seconds
+     */
+    start_seconds: number;
+    /**
+     * End Seconds
+     */
+    end_seconds: number;
+    /**
+     * Duration Seconds
+     */
+    duration_seconds: number;
+    /**
+     * Sprite Fragment
+     */
+    sprite_fragment?: string | null;
+};
+
+/**
  * SpriteMetadataModel
  */
 export type SpriteMetadataModel = {
     /**
-     * Path
+     * Url
      */
-    path: string;
+    url: string;
     /**
      * Thumbnail Size
      */
@@ -420,30 +539,30 @@ export type HealthCheckResponses = {
 
 export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
 
-export type CreateAnalysisJobData = {
-    body: AnalysisRequest;
+export type CreateJobData = {
+    body: CreateJobRequest;
     path?: never;
     query?: never;
-    url: '/job/analyse';
+    url: '/job/create';
 };
 
-export type CreateAnalysisJobErrors = {
+export type CreateJobErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateAnalysisJobError = CreateAnalysisJobErrors[keyof CreateAnalysisJobErrors];
+export type CreateJobError = CreateJobErrors[keyof CreateJobErrors];
 
-export type CreateAnalysisJobResponses = {
+export type CreateJobResponses = {
     /**
      * Successful Response
      */
-    202: AnalysisResponse;
+    202: CreateJobResponse;
 };
 
-export type CreateAnalysisJobResponse = CreateAnalysisJobResponses[keyof CreateAnalysisJobResponses];
+export type CreateJobResponse2 = CreateJobResponses[keyof CreateJobResponses];
 
 export type GetJobStatusData = {
     body?: never;
