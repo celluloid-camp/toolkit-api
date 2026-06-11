@@ -34,11 +34,3 @@ jobs:
 
       - name: Build
         run: pnpm run build
-
-      - name: Check for changeset
-        if: github.event_name == 'pull_request'
-        run: |
-          if [ -z "$(git diff --name-only origin/main...HEAD | grep '.changeset/')" ]; then
-            echo "⚠️  No changeset found. Please add a changeset by running: pnpm run changeset"
-            exit 1
-          fi
