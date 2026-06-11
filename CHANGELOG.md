@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/celluloid-camp/toolkit-api/compare/v1.5.0...v1.6.0) (2026-06-11)
+
+
+### Features
+
+* Update repository URL in package.json to reflect new toolkit API location ([c6494aa](https://github.com/celluloid-camp/toolkit-api/commit/c6494aa38d2afa23a3dd327f9baf42ed169b71a8))
+
 ## [1.5.0](https://github.com/celluloid-camp/vision-api/compare/v1.4.0...v1.5.0) (2026-03-18)
 
 
