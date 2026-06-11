@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-	input: 'https://raw.githubusercontent.com/celluloid-camp/vision/refs/heads/main/openapi.json',
+	input: 'https://raw.githubusercontent.com/celluloid-camp/toolkit/refs/heads/main/openapi.json',
 	output: {
 		path: './client',
 	},

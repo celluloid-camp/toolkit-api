@@ -54,7 +54,7 @@ export type CreateJobRequest = {
     /**
      * Params
      */
-    params?: ObjectDetectParams | SceneDetectParams;
+    params?: ObjectDetectParams | SceneDetectParams | TranscribeParams;
 };
 
 /**
@@ -177,6 +177,24 @@ export type DetectionStatisticsModel = {
 };
 
 /**
+ * DiarizationSegmentModel
+ */
+export type DiarizationSegmentModel = {
+    /**
+     * Start
+     */
+    start: number;
+    /**
+     * End
+     */
+    end: number;
+    /**
+     * Speaker
+     */
+    speaker: string;
+};
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -254,7 +272,9 @@ export type JobResultsResponse = {
         result_type: 'object_detect';
     } & DetectionResultsModel) | ({
         result_type: 'scene_detect';
-    } & SceneDetectResultsModel) | null;
+    } & SceneDetectResultsModel) | ({
+        result_type: 'transcribe';
+    } & TranscribeResultsModel) | null;
     /**
      * Error Message
      */
@@ -332,7 +352,11 @@ export type JobStatusResponse = {
 /**
  * JobType
  */
-export const JobType = { OBJECT_DETECT: 'object_detect', SCENE_DETECT: 'scene_detect' } as const;
+export const JobType = {
+    OBJECT_DETECT: 'object_detect',
+    SCENE_DETECT: 'scene_detect',
+    TRANSCRIBE: 'transcribe'
+} as const;
 
 /**
  * JobType
@@ -470,6 +494,20 @@ export type SceneInfoModel = {
 };
 
 /**
+ * SpeakerSummaryModel
+ */
+export type SpeakerSummaryModel = {
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Total Speaking Time Sec
+     */
+    total_speaking_time_sec: number;
+};
+
+/**
  * SpriteMetadataModel
  */
 export type SpriteMetadataModel = {
@@ -481,6 +519,159 @@ export type SpriteMetadataModel = {
      * Thumbnail Size
      */
     thumbnail_size: Array<number>;
+};
+
+/**
+ * TranscribeParams
+ */
+export type TranscribeParams = {
+    /**
+     * Model Size
+     *
+     * Whisper model size (tiny, base, small, medium, large-v2, large-v3)
+     */
+    model_size?: string;
+    /**
+     * Device
+     *
+     * Inference device (cpu or cuda)
+     */
+    device?: string;
+    /**
+     * Compute Type
+     *
+     * Quantisation type (int8, float16, float32)
+     */
+    compute_type?: string;
+    /**
+     * Language
+     *
+     * ISO-639-1 language code, or null for auto-detection
+     */
+    language?: string | null;
+    /**
+     * Diarization Enabled
+     *
+     * Whether to run speaker diarization
+     */
+    diarization_enabled?: boolean;
+    /**
+     * Num Speakers
+     *
+     * Exact number of speakers (overrides min/max)
+     */
+    num_speakers?: number | null;
+    /**
+     * Min Speakers
+     *
+     * Minimum number of speakers hint
+     */
+    min_speakers?: number | null;
+    /**
+     * Max Speakers
+     *
+     * Maximum number of speakers hint
+     */
+    max_speakers?: number | null;
+};
+
+/**
+ * TranscribeResultsModel
+ */
+export type TranscribeResultsModel = {
+    /**
+     * Result Type
+     */
+    result_type?: 'transcribe';
+    metadata: TranscriptionMetadataModel;
+    /**
+     * Segments
+     */
+    segments: Array<TranscriptSegmentModel>;
+    /**
+     * Speakers
+     */
+    speakers: Array<SpeakerSummaryModel>;
+    /**
+     * Diarization
+     */
+    diarization: Array<DiarizationSegmentModel>;
+};
+
+/**
+ * TranscriptSegmentModel
+ */
+export type TranscriptSegmentModel = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Start
+     */
+    start: number;
+    /**
+     * End
+     */
+    end: number;
+    /**
+     * Speaker
+     */
+    speaker?: string | null;
+    /**
+     * Text
+     */
+    text: string;
+    /**
+     * Confidence
+     */
+    confidence?: number | null;
+    /**
+     * Words
+     */
+    words?: Array<WordModel> | null;
+};
+
+/**
+ * TranscriptionMetadataModel
+ */
+export type TranscriptionMetadataModel = {
+    /**
+     * Engine
+     */
+    engine: string;
+    /**
+     * Asr Backend
+     */
+    asr_backend?: string;
+    /**
+     * Diarization Backend
+     */
+    diarization_backend?: string | null;
+    /**
+     * Device
+     */
+    device: string;
+    /**
+     * Compute Type
+     */
+    compute_type: string;
+    /**
+     * Asr Model
+     */
+    asr_model: string;
+    /**
+     * Language
+     */
+    language: string;
+    /**
+     * Audio Duration Sec
+     */
+    audio_duration_sec: number;
+    /**
+     * Processing Time Sec
+     */
+    processing_time_sec: number;
 };
 
 /**
@@ -525,6 +716,28 @@ export type VideoMetadataModel = {
      * Source
      */
     source: string;
+};
+
+/**
+ * WordModel
+ */
+export type WordModel = {
+    /**
+     * Word
+     */
+    word: string;
+    /**
+     * Start
+     */
+    start: number;
+    /**
+     * End
+     */
+    end: number;
+    /**
+     * Probability
+     */
+    probability: number;
 };
 
 export type HealthCheckData = {

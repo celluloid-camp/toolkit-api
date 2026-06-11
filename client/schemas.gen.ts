@@ -63,6 +63,9 @@ export const CreateJobRequestSchema = {
                 },
                 {
                     $ref: '#/components/schemas/SceneDetectParams'
+                },
+                {
+                    $ref: '#/components/schemas/TranscribeParams'
                 }
             ],
             title: 'Params'
@@ -289,6 +292,30 @@ export const DetectionStatisticsModelSchema = {
     title: 'DetectionStatisticsModel'
 } as const;
 
+export const DiarizationSegmentModelSchema = {
+    properties: {
+        start: {
+            type: 'number',
+            title: 'Start'
+        },
+        end: {
+            type: 'number',
+            title: 'End'
+        },
+        speaker: {
+            type: 'string',
+            title: 'Speaker'
+        }
+    },
+    type: 'object',
+    required: [
+        'start',
+        'end',
+        'speaker'
+    ],
+    title: 'DiarizationSegmentModel'
+} as const;
+
 export const HTTPValidationErrorSchema = {
     properties: {
         detail: {
@@ -409,13 +436,17 @@ export const JobResultsResponseSchema = {
                         },
                         {
                             $ref: '#/components/schemas/SceneDetectResultsModel'
+                        },
+                        {
+                            $ref: '#/components/schemas/TranscribeResultsModel'
                         }
                     ],
                     discriminator: {
                         propertyName: 'result_type',
                         mapping: {
                             object_detect: '#/components/schemas/DetectionResultsModel',
-                            scene_detect: '#/components/schemas/SceneDetectResultsModel'
+                            scene_detect: '#/components/schemas/SceneDetectResultsModel',
+                            transcribe: '#/components/schemas/TranscribeResultsModel'
                         }
                     }
                 },
@@ -560,7 +591,8 @@ export const JobTypeSchema = {
     type: 'string',
     enum: [
         'object_detect',
-        'scene_detect'
+        'scene_detect',
+        'transcribe'
     ],
     title: 'JobType'
 } as const;
@@ -809,6 +841,25 @@ export const SceneInfoModelSchema = {
     title: 'SceneInfoModel'
 } as const;
 
+export const SpeakerSummaryModelSchema = {
+    properties: {
+        label: {
+            type: 'string',
+            title: 'Label'
+        },
+        total_speaking_time_sec: {
+            type: 'number',
+            title: 'Total Speaking Time Sec'
+        }
+    },
+    type: 'object',
+    required: [
+        'label',
+        'total_speaking_time_sec'
+    ],
+    title: 'SpeakerSummaryModel'
+} as const;
+
 export const SpriteMetadataModelSchema = {
     properties: {
         url: {
@@ -829,6 +880,256 @@ export const SpriteMetadataModelSchema = {
         'thumbnail_size'
     ],
     title: 'SpriteMetadataModel'
+} as const;
+
+export const TranscribeParamsSchema = {
+    properties: {
+        model_size: {
+            type: 'string',
+            title: 'Model Size',
+            description: 'Whisper model size (tiny, base, small, medium, large-v2, large-v3)',
+            default: 'small'
+        },
+        device: {
+            type: 'string',
+            title: 'Device',
+            description: 'Inference device (cpu or cuda)',
+            default: 'cpu'
+        },
+        compute_type: {
+            type: 'string',
+            title: 'Compute Type',
+            description: 'Quantisation type (int8, float16, float32)',
+            default: 'int8'
+        },
+        language: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Language',
+            description: 'ISO-639-1 language code, or null for auto-detection'
+        },
+        diarization_enabled: {
+            type: 'boolean',
+            title: 'Diarization Enabled',
+            description: 'Whether to run speaker diarization',
+            default: true
+        },
+        num_speakers: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Num Speakers',
+            description: 'Exact number of speakers (overrides min/max)'
+        },
+        min_speakers: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Min Speakers',
+            description: 'Minimum number of speakers hint'
+        },
+        max_speakers: {
+            anyOf: [
+                {
+                    type: 'integer',
+                    minimum: 1
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Max Speakers',
+            description: 'Maximum number of speakers hint'
+        }
+    },
+    type: 'object',
+    title: 'TranscribeParams'
+} as const;
+
+export const TranscribeResultsModelSchema = {
+    properties: {
+        result_type: {
+            type: 'string',
+            const: 'transcribe',
+            title: 'Result Type',
+            default: 'transcribe'
+        },
+        metadata: {
+            $ref: '#/components/schemas/TranscriptionMetadataModel'
+        },
+        segments: {
+            items: {
+                $ref: '#/components/schemas/TranscriptSegmentModel'
+            },
+            type: 'array',
+            title: 'Segments'
+        },
+        speakers: {
+            items: {
+                $ref: '#/components/schemas/SpeakerSummaryModel'
+            },
+            type: 'array',
+            title: 'Speakers'
+        },
+        diarization: {
+            items: {
+                $ref: '#/components/schemas/DiarizationSegmentModel'
+            },
+            type: 'array',
+            title: 'Diarization'
+        }
+    },
+    type: 'object',
+    required: [
+        'metadata',
+        'segments',
+        'speakers',
+        'diarization'
+    ],
+    title: 'TranscribeResultsModel'
+} as const;
+
+export const TranscriptSegmentModelSchema = {
+    properties: {
+        id: {
+            type: 'integer',
+            title: 'Id'
+        },
+        start: {
+            type: 'number',
+            title: 'Start'
+        },
+        end: {
+            type: 'number',
+            title: 'End'
+        },
+        speaker: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Speaker'
+        },
+        text: {
+            type: 'string',
+            title: 'Text'
+        },
+        confidence: {
+            anyOf: [
+                {
+                    type: 'number'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Confidence'
+        },
+        words: {
+            anyOf: [
+                {
+                    items: {
+                        $ref: '#/components/schemas/WordModel'
+                    },
+                    type: 'array'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Words'
+        }
+    },
+    type: 'object',
+    required: [
+        'id',
+        'start',
+        'end',
+        'text'
+    ],
+    title: 'TranscriptSegmentModel'
+} as const;
+
+export const TranscriptionMetadataModelSchema = {
+    properties: {
+        engine: {
+            type: 'string',
+            title: 'Engine'
+        },
+        asr_backend: {
+            type: 'string',
+            title: 'Asr Backend',
+            default: 'faster-whisper'
+        },
+        diarization_backend: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Diarization Backend'
+        },
+        device: {
+            type: 'string',
+            title: 'Device'
+        },
+        compute_type: {
+            type: 'string',
+            title: 'Compute Type'
+        },
+        asr_model: {
+            type: 'string',
+            title: 'Asr Model'
+        },
+        language: {
+            type: 'string',
+            title: 'Language'
+        },
+        audio_duration_sec: {
+            type: 'number',
+            title: 'Audio Duration Sec'
+        },
+        processing_time_sec: {
+            type: 'number',
+            title: 'Processing Time Sec'
+        }
+    },
+    type: 'object',
+    required: [
+        'engine',
+        'device',
+        'compute_type',
+        'asr_model',
+        'language',
+        'audio_duration_sec',
+        'processing_time_sec'
+    ],
+    title: 'TranscriptionMetadataModel'
 } as const;
 
 export const ValidationErrorSchema = {
@@ -897,4 +1198,33 @@ export const VideoMetadataModelSchema = {
         'source'
     ],
     title: 'VideoMetadataModel'
+} as const;
+
+export const WordModelSchema = {
+    properties: {
+        word: {
+            type: 'string',
+            title: 'Word'
+        },
+        start: {
+            type: 'number',
+            title: 'Start'
+        },
+        end: {
+            type: 'number',
+            title: 'End'
+        },
+        probability: {
+            type: 'number',
+            title: 'Probability'
+        }
+    },
+    type: 'object',
+    required: [
+        'word',
+        'start',
+        'end',
+        'probability'
+    ],
+    title: 'WordModel'
 } as const;

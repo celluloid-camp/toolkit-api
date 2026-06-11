@@ -1,17 +1,17 @@
-# @celluloid/vision-api
+# @celluloid/toolkit-api
 
-A TypeScript client library for the Vision API, generated from the official OpenAPI specification. This package provides a fully type-safe fetch client for video analysis and object detection.
+A TypeScript client library for the [Celluloid Toolkit](https://github.com/celluloid-camp/celluloid-toolkit), generated from the official OpenAPI specification. This package provides a fully type-safe fetch client for the Celluloid Toolkit.
 
 ## Installation
 
 ```bash
-pnpm add @celluloid/vision-api
+pnpm add @celluloid/toolkit-api
 ```
 
 Or with npm:
 
 ```bash
-npm install @celluloid/vision-api
+npm install @celluloid/toolkit-api
 ```
 
 ## Usage
@@ -19,11 +19,11 @@ npm install @celluloid/vision-api
 ### Basic Example - Starting Video Analysis
 
 ```typescript
-import { createClient } from '@celluloid/vision-api/client/client';
-import { startDetectionAnalysePost } from '@celluloid/vision-api/client';
+import { createClient } from '@celluloid/toolkit-api/client/client';
+import { startDetectionAnalysePost } from '@celluloid/toolkit-api/client';
 
 const client = createClient({
-  baseUrl: 'https://vision.celluloid.me',
+  baseUrl: 'https://toolkit.celluloid.me',
   headers: {
     'x-api-key': 'YOUR_API_KEY',
   },
@@ -46,12 +46,12 @@ console.log(response.data); // { job_id, status, queue_position, message, callba
 You can also use the pre-configured default client instance:
 
 ```typescript
-import { client } from '@celluloid/vision-api/client/client.gen';
-import { startDetectionAnalysePost } from '@celluloid/vision-api/client';
+import { client } from '@celluloid/toolkit-api/client/client.gen';
+import { startDetectionAnalysePost } from '@celluloid/toolkit-api/client';
 
 // Configure the default client
 client.setConfig({
-  baseUrl: 'https://vision.celluloid.me',
+  baseUrl: 'https://toolkit.celluloid.me',
   headers: {
     'x-api-key': 'YOUR_API_KEY',
   },
@@ -69,7 +69,7 @@ const response = await startDetectionAnalysePost({
 ### Checking Job Status
 
 ```typescript
-import { getJobStatusStatusJobIdGet } from '@celluloid/vision-api/client';
+import { getJobStatusStatusJobIdGet } from '@celluloid/toolkit-api/client';
 
 const status = await getJobStatusStatusJobIdGet({
   client,
@@ -84,7 +84,7 @@ console.log(status.data); // { status, progress, ... }
 ### Getting Job Results
 
 ```typescript
-import { getJobResultsResultsJobIdGet } from '@celluloid/vision-api/client';
+import { getJobResultsResultsJobIdGet } from '@celluloid/toolkit-api/client';
 
 const results = await getJobResultsResultsJobIdGet({
   client,
@@ -99,7 +99,7 @@ console.log(results.data); // { version, metadata, frames, ... }
 ### Health Check
 
 ```typescript
-import { healthCheckHealthGet } from '@celluloid/vision-api/client';
+import { healthCheckHealthGet } from '@celluloid/toolkit-api/client';
 
 const health = await healthCheckHealthGet({ client });
 console.log(health.data); // { status: 'ok' }
@@ -108,10 +108,10 @@ console.log(health.data); // { status: 'ok' }
 ### Custom Configuration
 
 ```typescript
-import { createClient } from '@celluloid/vision-api/client';
+import { createClient } from '@celluloid/toolkit-api/client';
 
 const client = createClient({
-  baseUrl: 'https://vision.celluloid.me',
+  baseUrl: 'https://toolkit.celluloid.me',
   headers: {
     'x-api-key': 'YOUR_API_KEY',
     'User-Agent': 'MyApp/1.0',
@@ -126,7 +126,7 @@ client.setConfig({
 
 ## API Reference
 
-The client is generated from the Vision API OpenAPI specification. All API endpoints are available through the SDK functions exported from `@celluloid/peertube-api/client`.
+The client is generated from the Celluloid Toolkit OpenAPI specification. All API endpoints are available through the SDK functions exported from `@celluloid/toolkit-api/client`.
 
 ### Available Endpoints
 
