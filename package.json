@@ -6,7 +6,7 @@
 	"packageManager": "pnpm@9.0.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/celluloid-camp/celluloid-toolkit-api"
+		"url": "https://github.com/celluloid-camp/toolkit-api"
 	},
 	"exports": {
 		".": {
